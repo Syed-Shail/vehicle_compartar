@@ -7,23 +7,23 @@ import re
 import firebase_admin
 from firebase_admin import credentials, db, auth
 
-def get_firebase_config():
-    # Reads firebase_keys.txt and returns a dict with keys
-    with open('firebase_keys.txt', 'r') as f:
-        keys = {}
-        for line in f:
-            if ':' in line:
-                k, v = line.strip().split(':', 1)
-                keys[k.strip()] = v.strip()
-    return keys
+firebase_creds_json = os.environ.get('FIREBASE_CREDS_JSON')
+firebase_api_key = os.environ.get('FIREBASE_API_KEY')
+firebase_db_url = os.environ.get('FIREBASE_DATABASE_URL')
 
-firebase_keys = get_firebase_config()
+if not firebase_creds_json or not firebase_api_key or not firebase_db_url:
+    raise Exception("Firebase environment variables are not properly set.")
+
+firebase_creds_dict = json.loads(firebase_creds_json)
+
+# Initialize Firebase only once
 if not firebase_admin._apps:
-    cred = credentials.Certificate(firebase_keys['service_account_path'])
+    cred = credentials.Certificate(firebase_creds_dict)
     firebase_admin.initialize_app(cred, {
-        'databaseURL': firebase_keys['database_url']
+        'databaseURL': firebase_db_url
     })
-FIREBASE_API_KEY = firebase_keys.get('api_key', '')
+
+FIREBASE_API_KEY = firebase_api_key
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
@@ -662,4 +662,5 @@ def recommend():
     )
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
