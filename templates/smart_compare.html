@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Compare Cars - CarClix</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 480px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 38px 38px 28px 38px;
+            border-radius: 22px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.13), 0 1.5px 8px rgba(0,123,255,0.06);
+            position: relative;
+        }
+        h2 {
+            text-align: center;
+            color: #1a2238;
+            margin-bottom: 22px;
+            font-size: 2.1rem;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+        }
+        form > div { margin-bottom: 15px; }
+        label { font-weight: bold; margin-bottom: 5px; display: block; color: #22223b; }
+        input {
+            width: 100%;
+            padding: 13px 12px;
+            border: 1.5px solid #b6c6e0;
+            border-radius: 8px;
+            font-size: 1.08rem;
+            margin-bottom: 8px;
+            background: #f7fafd;
+            transition: border 0.2s;
+        }
+        input:focus {
+            border-color: #007BFF;
+            outline: none;
+            background: #f0f7ff;
+        }
+        button {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(90deg, #43aa8b 60%, #007BFF 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.13rem;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(67,170,139,0.08);
+            transition: background 0.2s, transform 0.2s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #277da1 60%, #0056b3 100%);
+            transform: translateY(-2px) scale(1.03);
+        }
+        .result {
+            margin-top: 20px;
+            background: linear-gradient(90deg, #e8f0fe 60%, #f6fff8 100%);
+            padding: 18px 14px;
+            border-radius: 12px;
+            font-size: 1.08rem;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+        }
+        a {
+            display: block;
+            margin: 18px auto 0 auto;
+            width: fit-content;
+            text-align: center;
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 1.05rem;
+            font-weight: 500;
+            padding: 7px 18px;
+            border-radius: 6px;
+            background: #f7fafd;
+            transition: background 0.2s;
+        }
+        a:hover {
+            background: #e0eafc;
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 14px 2vw 14px 2vw; }
+            h2 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Smart Compare Cars</h2>
+        <form method="POST">
+            <div>
+                <label for="car1">First Car Name</label>
+                <input type="text" id="car1" name="car1" placeholder="e.g. Honda City" required>
+            </div>
+            <div>
+                <label for="car2">Second Car Name</label>
+                <input type="text" id="car2" name="car2" placeholder="e.g. Tata Nexon EV" required>
+            </div>
+            <button type="submit">Compare</button>
+        </form>
+        {% if result %}
+        <div class="result">{{ result|safe }}</div>
+        {% endif %}
+        <a href="/chat">← Back to AI Chat</a>
+    </div>
+</body>
+</html>

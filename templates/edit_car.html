@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Car - CarClix</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: #212a36;
+            color: #fff;
+            padding: 18px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .navbar .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .navbar .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 24px;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        .navbar .nav-links a:hover {
+            color: #00b4d8;
+        }
+        .container {
+            max-width: 480px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 38px 38px 28px 38px;
+            border-radius: 22px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.13), 0 1.5px 8px rgba(0,123,255,0.06);
+            position: relative;
+        }
+        h2 {
+            text-align: center;
+            color: #1a2238;
+            margin-bottom: 22px;
+            font-size: 2.1rem;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+        }
+        form > div { margin-bottom: 15px; }
+        label { font-weight: bold; margin-bottom: 5px; display: block; color: #22223b; }
+        input, select {
+            width: 100%;
+            padding: 13px 12px;
+            border: 1.5px solid #b6c6e0;
+            border-radius: 8px;
+            font-size: 1.08rem;
+            margin-bottom: 8px;
+            background: #f7fafd;
+            transition: border 0.2s;
+        }
+        input:focus, select:focus {
+            border-color: #007BFF;
+            outline: none;
+            background: #f0f7ff;
+        }
+        button {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(90deg, #007BFF 60%, #43aa8b 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.13rem;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.08);
+            transition: background 0.2s, transform 0.2s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #0056b3 60%, #277da1 100%);
+            transform: translateY(-2px) scale(1.03);
+        }
+        .back-link {
+            display: block;
+            margin: 18px auto 0 auto;
+            width: fit-content;
+            text-align: center;
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 1.05rem;
+            font-weight: 500;
+            padding: 7px 18px;
+            border-radius: 6px;
+            background: #f7fafd;
+            transition: background 0.2s;
+        }
+        .back-link:hover {
+            background: #e0eafc;
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 14px 2vw 14px 2vw; }
+            h2 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="container">
+            <span class="logo">CarClix</span>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/multi_compare">Compare</a>
+                <a href="/chat">AI Chat</a>
+                {% if session and session.get('username') %}
+                <a href="/logout">Logout</a>
+                {% else %}
+                <a href="/login">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Edit Car - {{ car.name }}</h2>
+        <form method="POST" action="/edit_car/{{ car.id }}">
+            <div>
+                <label for="name">Car Name</label>
+                <input type="text" id="name" name="name" value="{{ car.name }}" required>
+            </div>
+            <div>
+                <label for="price">Price (₹)</label>
+                <input type="number" id="price" name="price" value="{{ car.price }}" required>
+            </div>
+            <div>
+                <label for="fuel_type">Fuel Type</label>
+                <select id="fuel_type" name="fuel_type">
+                    <option value="Petrol" {% if car.fuel_type == 'Petrol' %}selected{% endif %}>Petrol</option>
+                    <option value="Diesel" {% if car.fuel_type == 'Diesel' %}selected{% endif %}>Diesel</option>
+                    <option value="Electric" {% if car.fuel_type == 'Electric' %}selected{% endif %}>Electric</option>
+                    <option value="CNG" {% if car.fuel_type == 'CNG' %}selected{% endif %}>CNG</option>
+                </select>
+            </div>
+            <div>
+                <label for="seats">Seats</label>
+                <input type="number" id="seats" name="seats" value="{{ car.seats }}" required>
+            </div>
+            <div>
+                <label for="economy">Fuel Economy</label>
+                <input type="number" step="0.1" id="economy" name="economy" value="{{ car.economy }}" required>
+            </div>
+            <div>
+                <label for="type">Car Type</label>
+                <select id="type" name="type">
+                    <option value="Sedan" {% if car.type == 'Sedan' %}selected{% endif %}>Sedan</option>
+                    <option value="SUV" {% if car.type == 'SUV' %}selected{% endif %}>SUV</option>
+                    <option value="Hatchback" {% if car.type == 'Hatchback' %}selected{% endif %}>Hatchback</option>
+                </select>
+            </div>
+            <div>
+                <label for="brand">Brand</label>
+                <input type="text" id="brand" name="brand" value="{{ car.brand }}" required>
+            </div>
+            <button type="submit">Save Changes</button>
+        </form>
+        <a class="back-link" href="/">← Back to Home</a>
+    </div>
+</body>
+</html>

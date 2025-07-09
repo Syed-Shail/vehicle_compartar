@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vehicle Recommendation - CarClix</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: #212a36;
+            color: #fff;
+            padding: 18px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .navbar .navbar-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .navbar .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 24px;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        .navbar .nav-links a:hover {
+            color: #00b4d8;
+        }
+        .container {
+            max-width: 960px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 38px 38px 28px 38px;
+            border-radius: 22px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.13), 0 1.5px 8px rgba(0,123,255,0.06);
+            position: relative;
+        }
+        h2, h3 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #1a2238;
+            font-weight: 700;
+        }
+        form.recommend-form {
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 14px;
+            padding: 26px 20px 18px 20px;
+            box-shadow: 0 2px 12px rgba(0,123,255,0.07);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 22px;
+            justify-content: center;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 140px;
+            margin-bottom: 0;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #1a2238;
+            margin-bottom: 6px;
+            font-size: 1rem;
+        }
+        .form-group input,
+        .form-group select {
+            padding: 10px 12px;
+            border: 1.5px solid #b6c6e0;
+            border-radius: 7px;
+            font-size: 1rem;
+            background: #f7fafd;
+            transition: border 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #007BFF;
+            outline: none;
+            background: #f0f7ff;
+        }
+        .recommend-btn {
+            display: block;
+            margin: 24px auto 0 auto;
+            padding: 13px 38px;
+            font-size: 1.13rem;
+            background: linear-gradient(90deg, #007BFF 60%, #43aa8b 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.08);
+            transition: background 0.2s, transform 0.2s;
+            cursor: pointer;
+        }
+        .recommend-btn:hover {
+            background: linear-gradient(90deg, #0056b3 60%, #277da1 100%);
+            transform: translateY(-2px) scale(1.04);
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0;
+            background: #f8f9fa;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        th, td {
+            padding: 13px 10px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        th {
+            background: #007BFF;
+            color: white;
+            font-size: 1.08rem;
+            letter-spacing: 0.5px;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .back-btn {
+            display: block;
+            width: fit-content;
+            margin: 30px auto 0;
+            padding: 12px 22px;
+            font-size: 16px;
+            background: linear-gradient(90deg, #007BFF 60%, #43aa8b 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.08);
+            transition: background 0.2s, transform 0.2s;
+        }
+        .back-btn:hover {
+            background: linear-gradient(90deg, #0056b3 60%, #277da1 100%);
+            transform: translateY(-2px) scale(1.04);
+        }
+        .note {
+            text-align: center;
+            color: #555;
+            font-size: 14px;
+        }
+        @media (max-width: 900px) {
+            .form-row { flex-direction: column; align-items: stretch; }
+        }
+        @media (max-width: 700px) {
+            .container { padding: 14px 2vw 14px 2vw; }
+            th, td { font-size: 13px; }
+            .form-group input, .form-group select { font-size: 0.97rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <span class="logo">CarClix</span>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/multi_compare">Compare</a>
+                <a href="/chat">AI Chat</a>
+                {% if session and session.get('username') %}
+                <a href="/logout">Logout</a>
+                {% else %}
+                <a href="/login">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Find the Right Car for You</h2>
+        <form method="POST" class="recommend-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="budget">Budget (₹)</label>
+                    <input type="number" id="budget" name="budget" placeholder="e.g. 1500000" required min="400000">
+                </div>
+                <div class="form-group">
+                    <label for="car_type">Car Type</label>
+                    <select id="car_type" name="car_type">
+                        <option value="">Any</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Sedan">Sedan</option>
+                        <option value="Hatchback">Hatchback</option>
+                        <option value="MPV">MPV</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="seats">Seats</label>
+                    <input type="number" id="seats" name="seats" min="2" max="8" placeholder="e.g. 5">
+                </div>
+                <div class="form-group">
+                    <label for="fuel_type">Fuel Type</label>
+                    <select id="fuel_type" name="fuel_type">
+                        <option value="">Any</option>
+                        <option value="Petrol">Petrol</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Electric">Electric</option>
+                        <option value="CNG">CNG</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="brand">Brand</label>
+                    <input type="text" id="brand" name="brand" placeholder="e.g. Honda">
+                </div>
+            </div>
+            <button type="submit" class="recommend-btn">Show Recommendations</button>
+        </form>
+
+        {% if request.method == 'POST' %}
+            {% if top_matches %}
+            <h3>Best Matches</h3>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Price (₹)</th>
+                    <th>Fuel</th>
+                    <th>Seats</th>
+                    <th>Economy (km/l)</th>
+                    <th>Type</th>
+                    <th>Brand</th>
+                </tr>
+                {% for car in top_matches %}
+                <tr>
+                    <td>{{ car.name }}</td>
+                    <td>{{ "{:,}".format(car.price) }}</td>
+                    <td>{{ car.fuel_type }}</td>
+                    <td>{{ car.seats }}</td>
+                    <td>{{ car.economy }}</td>
+                    <td>{{ car.type }}</td>
+                    <td>{{ car.brand }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p style="text-align: center; color: #c00; font-weight: 600;">No matches found for your budget and filters.</p>
+            {% endif %}
+
+            <h3>Smart Picks by Category</h3>
+            <table>
+                <tr>
+                    <th>Category</th>
+                    <th>Name</th>
+                    <th>Price (₹)</th>
+                    <th>Fuel</th>
+                    <th>Seats</th>
+                    <th>Economy</th>
+                    <th>Type</th>
+                    <th>Brand</th>
+                </tr>
+                {% for category, car in categories.items() %}
+                {% if car %}
+                <tr>
+                    <td>{{ category }}</td>
+                    <td>{{ car.name }}</td>
+                    <td>{{ "{:,}".format(car.price) }}</td>
+                    <td>{{ car.fuel_type }}</td>
+                    <td>{{ car.seats }}</td>
+                    <td>{{ car.economy }}</td>
+                    <td>{{ car.type }}</td>
+                    <td>{{ car.brand }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+
+            {% if alternatives %}
+            <h3>AI Suggested Alternatives</h3>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Price (₹)</th>
+                    <th>Fuel</th>
+                    <th>Seats</th>
+                    <th>Economy</th>
+                    <th>Type</th>
+                    <th>Brand</th>
+                </tr>
+                {% for car in alternatives %}
+                <tr>
+                    <td>{{ car.name }}</td>
+                    <td>{{ "{:,}".format(car.price) }}</td>
+                    <td>{{ car.fuel_type }}</td>
+                    <td>{{ car.seats }}</td>
+                    <td>{{ car.economy }}</td>
+                    <td>{{ car.type }}</td>
+                    <td>{{ car.brand }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+        {% endif %}
+
+        <a class="back-btn" href="/"><span>← Back to Home</span></a>
+        <a class="back-btn" href="/compare"><span>Compare Cars</span></a>
+        <div class="note">* These suggestions are based on your filters and general categories.</div>
+    </div>
+</body>
+</html>

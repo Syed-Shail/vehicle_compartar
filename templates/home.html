@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome - CarClix</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: #212a36;
+            color: #fff;
+            padding: 18px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .navbar .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .navbar .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 24px;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        .navbar .nav-links a:hover {
+            color: #00b4d8;
+        }
+        .container-main {
+            max-width: 1100px;
+            margin: 40px auto 0 auto;
+            background: #fff;
+            padding: 38px 38px 28px 38px;
+            border-radius: 22px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.10), 0 1.5px 8px rgba(0,123,255,0.06);
+        }
+        h2 {
+            text-align: center;
+            color: #1a2238;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+        .buttons {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .buttons a {
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .buttons button {
+            padding: 12px 22px;
+            font-size: 17px;
+            background: linear-gradient(90deg, #007BFF 60%, #43aa8b 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: background 0.2s, transform 0.2s;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.08);
+        }
+        .buttons button:hover {
+            background: linear-gradient(90deg, #0056b3 60%, #277da1 100%);
+            transform: translateY(-2px) scale(1.04);
+        }
+        .logout-btn {
+            background: #ef233c;
+        }
+        .logout-btn:hover {
+            background: #b7094c;
+        }
+        h3 {
+            margin-top: 30px;
+            color: #212a36;
+            font-size: 1.3rem;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 18px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        th, td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        th {
+            background: #212a36;
+            color: white;
+            font-size: 1.08rem;
+            letter-spacing: 0.5px;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .edit-btn {
+            background: #43aa8b;
+            color: white;
+            padding: 7px 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .edit-btn:hover {
+            background: #277da1;
+            transform: scale(1.06);
+        }
+        @media (max-width: 700px) {
+            .container-main, .navbar .container { padding: 10px 2vw; }
+            table, th, td { font-size: 13px; }
+            .buttons button { font-size: 14px; padding: 8px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="container">
+            <span class="logo">CarClix</span>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/multi_compare">Compare</a>
+                <a href="/chat">AI Chat</a>
+                <!-- <a href="/compare">Find the right car</a> -->
+                {% if session and session.get('username') %}
+                <a href="/logout">Logout</a>
+                {% else %}
+                <a href="/login">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="container-main">
+        <h2>Welcome to CarClix!</h2>
+        <p style="text-align:center; color:#007BFF; font-size:1.15rem; margin-bottom:22px; font-weight:500;">
+            Discover. Compare. Drive your dream. 🚗✨
+        </p>
+        <div class="buttons">
+            <a href="/chat"><button>Chat with AI Assistant</button></a>
+            <a href="/ai_quiz"><button>Take a quiz</button></a>
+            {% if session and session.get('username') %}
+            <a href="/add_car"><button>Add New Car</button></a>
+            {% endif %}
+            <a href="/recommend"><button>Find the right car</button></a>
+            <a href="/multi_compare"><button>Compare Cars</button></a>
+           
+        </div>
+        <h3>Available Vehicles</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Price (₹)</th>
+                <th>Fuel</th>
+                <th>Seats</th>
+                <th>Economy</th>
+                <th>Type</th>
+                {% if session and session.get('username') %}
+                <th>Action</th>
+                {% endif %}
+            </tr>
+            {% for car in cars %}
+            <tr>
+                <td>{{ car.name }}</td>
+                <td>{{ format_inr(car.price) if format_inr is defined else "{:,}".format(car.price) }}</td>
+                <td>{{ car.fuel_type }}</td>
+                <td>{{ car.seats }}</td>
+                <td>{{ car.economy }}</td>
+                <td>{{ car.type }}</td>
+                {% if session and session.get('username') %}
+                <td><a href="/edit_car/{{ car.id }}"><button class="edit-btn">Edit</button></a></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CarClix AI Car Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: #212a36;
+            color: #fff;
+            padding: 18px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .navbar .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .navbar .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 24px;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        .navbar .nav-links a:hover {
+            color: #00b4d8;
+        }
+        .quiz-box {
+            max-width: 480px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 38px 38px 28px 38px;
+            border-radius: 22px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.13), 0 1.5px 8px rgba(0,123,255,0.06);
+            position: relative;
+        }
+        h2 {
+            text-align: center;
+            color: #1a2238;
+            margin-bottom: 22px;
+            font-size: 2.1rem;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+        }
+        .question {
+            font-size: 1.18rem;
+            margin-bottom: 22px;
+            color: #212a36;
+            text-align: center;
+        }
+        form {
+            margin-bottom: 18px;
+        }
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 13px 12px;
+            border: 1.5px solid #b6c6e0;
+            border-radius: 8px;
+            font-size: 1.08rem;
+            margin-bottom: 16px;
+            background: #f7fafd;
+            transition: border 0.2s;
+        }
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            border-color: #007BFF;
+            outline: none;
+            background: #f0f7ff;
+        }
+        button {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(90deg, #007BFF 60%, #43aa8b 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.13rem;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.08);
+            transition: background 0.2s, transform 0.2s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #0056b3 60%, #277da1 100%);
+            transform: translateY(-2px) scale(1.03);
+        }
+        .result {
+            margin-top: 20px;
+            background: linear-gradient(90deg, #e8f0fe 60%, #f6fff8 100%);
+            padding: 18px 14px;
+            border-radius: 12px;
+            font-size: 1.08rem;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+        }
+        .answers {
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            background: #f7fafd;
+            border-radius: 7px;
+            padding: 8px 12px;
+        }
+        .back-link {
+            display: block;
+            margin: 18px auto 0 auto;
+            width: fit-content;
+            text-align: center;
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 1.05rem;
+            font-weight: 500;
+            padding: 7px 18px;
+            border-radius: 6px;
+            background: #f7fafd;
+            transition: background 0.2s;
+        }
+        .back-link:hover {
+            background: #e0eafc;
+            text-decoration: underline;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 18px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        th, td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        th {
+            background: #212a36;
+            color: white;
+            font-size: 1.08rem;
+            letter-spacing: 0.5px;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        @media (max-width: 600px) {
+            .quiz-box { padding: 14px 2vw 14px 2vw; }
+            h2 { font-size: 1.3rem; }
+            .question { font-size: 1rem; }
+            th, td { font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="container">
+            <span class="logo">CarClix</span>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/multi_compare">Compare</a>
+                <a href="/chat">AI Chat</a>
+                {% if session and session.get('username') %}
+                <a href="/logout">Logout</a>
+                {% else %}
+                <a href="/login">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="quiz-box">
+        <h2>CarClix AI Car Quiz</h2>
+        {% if results is not defined %}
+            <div class="question">
+                Question {{ step }} of {{ total }}<br><br>
+                {{ question.question }}
+            </div>
+            <form method="POST">
+                {% if question.type == 'number' %}
+                    <input type="number" name="{{ question.key }}" required>
+                {% elif question.type == 'select' %}
+                    <select name="{{ question.key }}" required>
+                        {% for opt in question.options %}
+                        <option value="{{ opt }}">{{ opt }}</option>
+                        {% endfor %}
+                    </select>
+                {% elif question.type == 'text' %}
+                    <input type="text" name="{{ question.key }}">
+                {% endif %}
+                <button type="submit">Next</button>
+            </form>
+            {% if answers %}
+            <div class="answers">
+                <b>Your Answers So Far:</b><br>
+                {% for k, v in answers.items() %}
+                    {{ k|capitalize }}: {{ v }}<br>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="result">
+                <b>Top Car Suggestions for You:</b>
+                {% if results %}
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price (₹)</th>
+                        <th>Fuel</th>
+                        <th>Seats</th>
+                        <th>Economy</th>
+                        <th>Type</th>
+                    </tr>
+                    {% for car in results %}
+                    <tr>
+                        <td>{{ car.name }}</td>
+                        <td>{{ format_inr(car.price) }}</td>
+                        <td>{{ car.fuel_type }}</td>
+                        <td>{{ car.seats }}</td>
+                        <td>{{ car.economy }}</td>
+                        <td>{{ car.type }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                <p>No matching cars found for your preferences.</p>
+                {% endif %}
+            </div>
+            <a class="back-link" href="/ai_quiz">Take Quiz Again</a>
+            <a class="back-link" href="/">← Back to Home</a>
+        {% endif %}
+    </div>
+</body>
+</html>
