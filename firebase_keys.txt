@@ -1,3 +1,0 @@
-service_account_path: firebase-service-account.json
-database_url: https://web-project-82f4e-default-rtdb.asia-southeast1.firebasedatabase.app/
-api_key: AIzaSyBeSgwFuU49VOzQSHdKfOWLoZUG-fxobyc
